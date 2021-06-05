@@ -1,0 +1,73 @@
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import moment from "moment";
+
+const BigPost = ({
+  id,
+  title,
+  content,
+  category,
+  posted,
+  imageUrl,
+  image,
+  author
+}) => {
+  function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  return (
+    <div className="rounded w-full p-4 lg:p-0 border-b-2 border-gray-50 flex flex-col md:flex-row mb-10">
+      <div className="cursor-pointer md:w-1/3">
+        {image ? (
+          <NavLink className="cursor-pointer" to={"/article/" + id}>
+            <img
+              src={image}
+              alt="post cover"
+              className="block lg:block rounded-md md:h-full md:w-72"
+            />
+          </NavLink>
+        ) : (
+          <NavLink className="cursor-pointer" to={"/article/" + id}>
+            <img
+              src={imageUrl}
+              alt="post cover"
+              className="block lg:block rounded-md w-full h-64 md:h-full lg:w-72 px-4 md:px-0 md:m-0"
+            />
+          </NavLink>
+        )}
+      </div>
+      <div className="bg-white lg:m-0 rounded md:w-2/3 ml-3 md:ml-20 lg:ml-0">
+        <NavLink
+          to={"/article/" + id}
+          className="md:mt-0 text-gray-800 font-semibold text-xl mb-1 hover:text-yellow-500"
+        >
+          {title}
+        </NavLink>
+        <div className="flex items-center mt-1">
+          <span className="text-yellow-600 text-base hidden md:block">
+            {capitalizeFirstLetter(category)}
+          </span>
+          <span className="mx-3 hidden md:block">|</span>
+          <img
+            src={author.avatar}
+            alt="avatar"
+            className="mx-2 my-5 w-6 h-6 object-cover rounded-full hidden sm:block"
+          />
+          <span className="text-sm text-gray-400 hidden md:block">
+            {author.firstName + " " + author.lastName}
+          </span>
+          <span className="mx-3 hidden md:block">|</span>
+          <span className="text-sm text-gray-400 hidden md:block">
+            {moment(posted).format("HH:mm Do MMM YYYY")}
+          </span>
+        </div>
+        <p className="block line-clamp-5 break normal md:pt-3 md:p-2 md:pl-0 md:h-44 md:text-sm text-gray-600 max-w-xl max-h-28 ">
+          {content}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default BigPost;
