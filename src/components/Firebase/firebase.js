@@ -51,9 +51,6 @@ class Firebase {
       .onSnapshot(onSnapshot);
   }
 
-  async getAuthors() {
-    return this.db.collection("authors").get();
-  }
 
   async deleteArticle(articleId) {
     return this.db.collection("articles").doc(articleId).delete();
@@ -63,46 +60,58 @@ class Firebase {
     return this.db.collection("categories").get();
   }
 
-  async createBook({ bookName, authorId, bookCover, summary }) {
-    const createBookCallable = this.functions.httpsCallable("createBook");
-    return createBookCallable({
-      bookName,
-      authorId,
-      bookCover,
-      summary,
-    });
-  }
 
   async createArticle({
     title,
+    firstKeyword,
+    secondKeyword,
+    description,
     content,
     categoryName,
     articleCover,
     featured,
-    author
+    author,
   }) {
     const createArticleCallable = this.functions.httpsCallable("createArticle");
     return createArticleCallable({
       title,
+      firstKeyword,
+      secondKeyword,
+      description,
       content,
       categoryName,
       articleCover,
       featured,
-      author
+      author,
     });
   }
 
   async updateArticle({
     title,
+    firstKeyword,
+    secondKeyword,
+    description,
     content,
     categoryName,
     articleCover,
     featured,
     articleId,
   }) {
+    // console.log(typeof(firstKeyword))
+    // console.log(typeof(secondKeyword))
+    // console.log(typeof(description))
+    // console.log(typeof(title))
+    // console.log(typeof(content))
+    // console.log(typeof(categoryName))
+    // console.log(typeof(articleCover))
+    // console.log(typeof(featured))
+    // console.log(typeof(articleId))
     const updateArticleCallable = this.functions.httpsCallable("updateArticle");
     return updateArticleCallable({
       title,
+      firstKeyword,
+      secondKeyword,
+      description,
       content,
       categoryName,
       articleCover,
@@ -111,39 +120,6 @@ class Firebase {
     });
   }
 
-  async createAuthor({ authorName }) {
-    const createAuthorCallable = this.functions.httpsCallable("createAuthor");
-    return createAuthorCallable({
-      authorName,
-    });
-  }
-
-  async register({ email, password, username }) {
-    await this.auth.createUserWithEmailAndPassword(email, password);
-    const createProfileCallable = this.functions.httpsCallable(
-      "createPublicProfile"
-    );
-    return createProfileCallable({
-      username,
-    });
-  }
-
-  async postComment({ text, bookId }) {
-    const postCommentCallable = this.functions.httpsCallable("postComment");
-    return postCommentCallable({
-      text,
-      bookId,
-    });
-  }
-
-  subscribeToBookComments({ bookId, onSnapshot }) {
-    const bookRef = this.db.collection("books").doc(bookId);
-    return this.db
-      .collection("comments")
-      .where("book", "==", bookRef)
-      .orderBy("dateCreated", "desc")
-      .onSnapshot(onSnapshot);
-  }
 
   subscribeToLatestNews({ onSnapshot }) {
     return this.db

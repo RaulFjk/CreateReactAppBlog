@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react"
 import { Link } from "react-router-dom"
 import ArticlesTable from "../components/ArticlesTable"
 import { FirebaseContext } from "../components/Firebase"
+import { Helmet } from "react-helmet"
 
 const ManageContent = () => {
   const { firebase, user } = useContext(FirebaseContext)
@@ -35,7 +36,11 @@ const ManageContent = () => {
   }
 
   return (
-    <div className="mt-24 flex-1 max-h-full mx-44 p-5 overflow-hidden">
+    <div className="mt-24 flex-1 max-h-full mx-auto p-5 overflow-hidden">
+       <Helmet>
+        <html lang="en" />
+        <title>Manage Content | Krypto Life</title>
+      </Helmet>
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="mr-3 mt-2 p-3">

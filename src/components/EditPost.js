@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { FirebaseContext } from "../components/Firebase";
 import { useHistory } from "react-router";
+import { Helmet } from "react-helmet";
 
 let fileReader;
 
@@ -11,13 +12,17 @@ if (typeof window !== "undefined") {
 const EditPost = (props) => {
   const { firebase, user } = useContext(FirebaseContext);
   const [article, setArticle] = useState("");
-  const [featured, setFeatured] = useState("");
+  const [featured, setFeatured] = useState(false);
   const [title, setTitle] = useState("");
+  const [firstKeyword, setFirstKeyword] = useState("");
+  const [secondKeyword, setSecondKeyword] = useState("");
+  const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [articleCover, setArticleCover] = useState("");
   const [newCoverUrl, setNewCoverUrl] = useState("");
   const [categories, setCategories] = useState([]);
   const [categoryName, setCategoryName] = useState("");
+  const [updated, setUpdated] = useState(false);
 
   const history = useHistory();
   const pathname = props.location.pathname;
@@ -51,8 +56,6 @@ const EditPost = (props) => {
     }
   }, [firebase]);
 
-
-
   useEffect(() => {
     if (firebase) {
       firebase
@@ -63,35 +66,56 @@ const EditPost = (props) => {
             ...snapshot.data(),
           });
           setTitle(snapshot.data().title);
+          setFirstKeyword(snapshot.data().firstKeyword);
+          setSecondKeyword(snapshot.data().secondKeyword);
+          setDescription(snapshot.data().description);
           setContent(snapshot.data().content);
           setCategoryName(snapshot.data().category);
+          setFeatured(snapshot.data().featured);
         })
-        .catch((err) => {
-
-        });
+        .catch((err) => {});
     }
   }, [firebase]);
 
   function handleSubmit(e) {
     e.preventDefault();
+
     firebase
       .updateArticle({
         title,
+        firstKeyword,
+        secondKeyword,
+        description,
         content,
         categoryName,
         articleCover,
         featured,
         articleId,
       })
-      .then(() => history.push("/manage-content"));
+      .then(
+        setUpdated(true),
+        setTimeout(() => {
+          setUpdated(false);
+          history.push("/manage-content");
+        }, 2000)
+      )
+      .catch((err) => alert(err));
   }
 
   if (!user) {
     return null;
   }
   if (article) {
+    let keywordsArray = [];
+    keywordsArray.push(article.firstKeyword);
+    keywordsArray.push(article.secondKeyword);
     return (
       <div className="py-12 mt-8">
+        <Helmet>
+          <title>{article.title} | Krypto Life</title>
+          <meta name="description" content={article.description} />
+          <meta name="keywords" content={keywordsArray.join(`, `)} />
+        </Helmet>
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
           <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div className="p-6 bg-white border-b border-gray-200">
@@ -174,6 +198,56 @@ const EditPost = (props) => {
                     })}
                   </select>
                 </div>
+                <div className="mb-4">
+                  <div className="w-48">
+                    <label className="text-xl text-gray-600 ">
+                      Keyword 1 <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="border-2 border-gray-300 p-2"
+                      name="firstKeyword"
+                      id="firstKeyword"
+                      value={firstKeyword}
+                      onChange={(e) => {
+                        e.persist();
+                        setFirstKeyword(e.target.value);
+                      }}
+                      required
+                    ></input>{" "}
+                  </div>
+                  <div className="w-48">
+                    <label className="text-xl text-gray-600 ">
+                      Keyword 2 <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="border-2 border-gray-300 p-2 "
+                      name="secondKeyword"
+                      id="secondKeyword"
+                      value={secondKeyword}
+                      onChange={(e) => {
+                        e.persist();
+                        setSecondKeyword(e.target.value);
+                      }}
+                      required
+                    ></input>{" "}
+                  </div>
+                </div>
+                <div className="mb-8">
+                  <label className="text-xl text-gray-600">
+                    Description <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    className="border-2 border-gray-300 p-2 w-full"
+                    value={description}
+                    rows="4"
+                    onChange={(e) => {
+                      e.persist();
+                      setDescription(e.target.value);
+                    }}
+                  />
+                </div>
                 <div className="mb-8">
                   <label className="text-xl text-gray-600">
                     Content <span className="text-red-500">*</span>
@@ -222,6 +296,11 @@ const EditPost = (props) => {
                   </label>
                 </div>
               </form>
+              {updated && (
+                <div className="my-5 mx-auto w-56 bg-green-300 shadow-lg p-5 text-red-700 font-mono">
+                  Article updated!
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -14,9 +14,31 @@ import AddArticle from "./components/AddArticle";
 import EditPost from "./components/EditPost";
 import AboutMe from "./components/AboutMe";
 import { Helmet } from "react-helmet";
+import Dropdown from "./components/Dropdown";
 
 const App = () => {
   const { user, firebase, loading } = useAuth();
+
+  const [isOpen, setIsOpen] = useState(false)
+
+  const toggle = () => {
+    setIsOpen(!isOpen)
+  }
+
+  useEffect(() => {
+    const hideMenu = () => {
+      if (window.innerWidth > 768 && isOpen) {
+        setIsOpen(false)
+      }
+    }
+
+    window.addEventListener("resize", hideMenu)
+
+    return () => {
+      window.removeEventListener("resize", hideMenu)
+    }
+  })
+
 
   return (
     <FirebaseContext.Provider value={{ user, firebase, loading }}>
@@ -31,8 +53,9 @@ const App = () => {
             />
           </Helmet>
           <header className="sticky top-0 ">
-            <Navbar />
+            <Navbar toggle={toggle} />
           </header>
+          <div className="w-full"><Dropdown isOpen={isOpen} toggle={toggle} /></div>
           <Switch>
             <Route exact path="/" component={Home} />
             <Route path="/login" component={LogIn} />

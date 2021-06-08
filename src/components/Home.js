@@ -11,11 +11,12 @@ const Home = () => {
     <div className="max-w-screen-lg mx-auto">
       <Helmet>
         <html lang="en" />
-        <title>Google</title>
+        <title>Home | Krypto Life</title>
         <meta
           name="google-site-verification"
           content="s88zq8kT6HFn-IQkkSR_vM-dW7ucHhvpPhcOGRn4EhA"
         />
+         <meta name="description" content="A simple blog about crypto tech news developed with Create-React-App" />
       </Helmet>
       {!!firebase && <FeaturedSection firebase={firebase} />}
       <div className="w-full border-b-2 border-gray-100 mt-10" />

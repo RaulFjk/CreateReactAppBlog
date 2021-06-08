@@ -12,6 +12,9 @@ const AddArticle = () => {
   const { firebase, user } = useContext(FirebaseContext);
   const [featured, setFeatured] = useState(false);
   const [title, setTitle] = useState("");
+  const [firstKeyword, setFirstKeyword] = useState("");
+  const [secondKeyword, setSecondKeyword] = useState("");
+  const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [articleCover, setArticleCover] = useState("");
   const [categories, setCategories] = useState([]);
@@ -74,6 +77,9 @@ const AddArticle = () => {
     firebase
       .createArticle({
         title,
+        firstKeyword,
+        secondKeyword,
+        description,
         content,
         categoryName,
         articleCover,
@@ -83,10 +89,11 @@ const AddArticle = () => {
       .then(
         setAdded(true),
         setTimeout(() => {
-          setAdded(false)
+          setAdded(false);
           history.push("/manage-content");
         }, 2000)
-      );
+      )
+      .catch((err) => alert("Something went wrong! Try again"));
   }
 
   if (!user) {
@@ -146,6 +153,56 @@ const AddArticle = () => {
                   ))}
                 </select>
               </div>
+              <div className="mb-4">
+                <div className="w-48">
+                  <label className="text-xl text-gray-600 ">
+                    Keyword 1 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="border-2 border-gray-300 p-2"
+                    name="firstKeyword"
+                    id="firstKeyword"
+                    value={firstKeyword}
+                    onChange={(e) => {
+                      e.persist();
+                      setFirstKeyword(e.target.value);
+                    }}
+                    required
+                  ></input>{" "}
+                </div>
+                <div className="w-48">
+                  <label className="text-xl text-gray-600 ">
+                    Keyword 2 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="border-2 border-gray-300 p-2 "
+                    name="secondKeyword"
+                    id="secondKeyword"
+                    value={secondKeyword}
+                    onChange={(e) => {
+                      e.persist();
+                      setSecondKeyword(e.target.value);
+                    }}
+                    required
+                  ></input>{" "}
+                </div>
+              </div>
+              <div className="mb-8">
+                <label className="text-xl text-gray-600">
+                  Description <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  className="border-2 border-gray-300 p-2 w-full"
+                  value={description}
+                  rows="4"
+                  onChange={(e) => {
+                    e.persist();
+                    setDescription(e.target.value);
+                  }}
+                />
+              </div>
               <div className="mb-8">
                 <label className="text-xl text-gray-600">
                   Content <span className="text-red-500">*</span>
@@ -153,6 +210,7 @@ const AddArticle = () => {
                 <textarea
                   className="border-2 border-gray-300 p-2 w-full"
                   value={content}
+                  rows="15"
                   onChange={(e) => {
                     e.persist();
                     setContent(e.target.value);

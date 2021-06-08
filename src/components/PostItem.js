@@ -1,6 +1,7 @@
 import React from "react"
+import moment from "moment"
 
-const PostItem = ({ title, content, category, image, author }) => {
+const PostItem = ({ title, firstKeyword, secondKeyword, content, posted, category, image, author }) => {
   return (
     <section>
       <div className="mb-4 md:mb-0 w-full mt-24 p-4 lg:p-0">
@@ -17,7 +18,9 @@ const PostItem = ({ title, content, category, image, author }) => {
             /> */}
             <span className="text-sm text-yellow-600">{author.firstName + ' ' + author.lastName}</span>
             <span className="mx-2">|</span>
-            <span className="text-sm text-gray-400">April 23, 2021</span>
+            <span className="text-sm text-gray-400">{moment(posted.toDate()).format("HH:mm Do MMM YYYY")}</span>
+            <span className="mx-2">|</span>
+            <span className="text-yellow-700 font-mono">#{firstKeyword}#{secondKeyword}</span>
           </div>
         </div>
         <div className="mx-auto">
